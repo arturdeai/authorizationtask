@@ -27,12 +27,12 @@ class LoginForm extends Model
     public function rules()
     {
         return [
-            // username and password are both required
-            [['email', 'password'], 'required'],
-            // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
+
             ['password', 'validatePassword'],
+
+            [['email', 'password'], 'required'],
+            ['email', 'validateEmail'],
         ];
     }
 
@@ -50,7 +50,15 @@ class LoginForm extends Model
 
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError('password', 'Неверное имя пользователя или пароль.');
-            } elseif ($user && $user->status == User::STATUS_WAIT) {
+            }
+        }
+    }
+
+    public function validateEmail($attribute, $params)
+    {
+        if (!$this->hasErrors()) {
+            $user = $this->getUser();
+            if ($user && $user->status == User::STATUS_WAIT) {
                 $this->addError('email', 'Ваш аккаунт не подтвержден.');
             }
         }

@@ -46,8 +46,8 @@ class SignupForm extends Model
     }
 
     function emailExtract($email, $item=0) {
-        $Data = explode("@", $email);
-        return @$Data[$item];
+        $data = explode("@", $email);
+        return @$data[$item];
     }
 
     /**

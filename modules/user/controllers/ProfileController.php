@@ -57,6 +57,7 @@ class ProfileController extends Controller
     public function actionDel()
     {
         $user = $this->findModel();
+        Yii::$app->user->logout();
         $user->delete();
         Yii::$app->getSession()->setFlash('success', 'Ваш профиль удален');
         return $this->goHome();
