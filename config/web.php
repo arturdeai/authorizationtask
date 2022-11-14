@@ -6,11 +6,8 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'language' => 'ru-RU',
-    'defaultRoute' => 'main/default/index',
+    'defaultRoute' => 'site/index',
     'modules' => [
-        'main' => [
-            'class' => 'app\modules\main\Module',
-        ],
         'user' => [
             'class' => 'app\modules\user\Module',
         ],
