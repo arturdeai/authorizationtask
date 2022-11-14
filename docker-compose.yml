@@ -1,0 +1,66 @@
+version: '3'
+
+networks:
+  yii:
+
+services:
+  nginx:
+    container_name: nginx
+    networks:
+      - yii
+    image: nginx:latest
+    ports:
+      - '${APP_PORT:-80}:80'
+    volumes:
+      - '.:/app'
+      - './docker/nginx/default.conf:/etc/nginx/conf.d/default.conf'
+      - './docker/nginx/logs:/var/log/nginx'
+    depends_on:
+      - php
+    restart: always
+
+  php:
+    container_name: php-fpm
+    build:
+      context: docker/php
+    networks:
+      - yii
+    working_dir: /app
+    volumes:
+      - '.:/app'
+    ports:
+      - '${PHP_FPM_PORT:-9000}:9000'
+    restart: always
+    links:
+      - mysql
+    depends_on:
+      - mysql
+
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+      MYSQL_DATABASE: mydb
+    volumes:
+      - ./mysql/:/var/lib/mysql
+    networks:
+      - yii
+    restart: always
+
+  adminer: # веб интерфейс для базы
+    container_name: mysql_adminer
+    image: adminer
+    networks:
+      - yii
+    restart: always
+    ports:
+      - '${ADMINER_PORT:-8080}:8080'
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    environment:
+      ADMINER_DESIGN: 'price'
